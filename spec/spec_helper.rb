@@ -3,6 +3,8 @@ require 'rubygems'
 #require 'ruby-debug'
 require 'active_record'
 
+ActiveRecord::Base.time_zone_aware_attributes = true
+
 ENV['TZ'] = 'UTC'
 Time.zone = 'Eastern Time (US & Canada)'
 
