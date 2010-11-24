@@ -4,7 +4,7 @@ module Searchlogic
     module NamedScopeTools
       # Retrieves the options passed when creating the respective named scope. Ex:
       #
-      #   named_scope :whatever, :conditions => {:column => value}
+      #   scope :whatever, where(:column => value)
       #
       # This method will return:
       #
@@ -12,7 +12,7 @@ module Searchlogic
       #
       # ActiveRecord hides this internally in a Proc, so we have to try and pull it out with this
       # method.
-      def named_scope_options(name)
+      def scope_options(name)
         key = scopes.key?(name.to_sym) ? name.to_sym : condition_scope_name(name)
         
         if key
@@ -26,19 +26,19 @@ module Searchlogic
       # to determine if the condition should be ignored when calling the search method.
       # If the condition is false and the arity is 0, then we skip it all together. Ex:
       #
-      #   User.named_scope :age_is_4, :conditions => {:age => 4}
+      #   User.scope :age_is_4, where(:age => 4)
       #   User.search(:age_is_4 => false) == User.all
-      #   User.search(:age_is_4 => true) == User.all(:conditions => {:age => 4})
+      #   User.search(:age_is_4 => true) == User.where(:age => 4)
       #
       # We also use it when trying to "copy" the underlying named scope for association
       # conditions. This way our aliased scope accepts the same number of parameters for
       # the underlying scope.
       def named_scope_arity(name)
-        options = named_scope_options(name)
+        options = scope_options(name)
         options.respond_to?(:arity) ? options.arity : nil
       end
       
-      # When searchlogic calls a named_scope on a foreigh model it will execute that scope and then call scope(:find).
+      # When searchlogic calls a scope on a foreigh model it will execute that scope and then call scope(:find).
       # When we get these options we want this to be in an exclusive scope, especially if we are calling a condition on
       # the same originating model:
       #
